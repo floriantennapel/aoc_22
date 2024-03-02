@@ -20,7 +20,7 @@ class Dir(File):
 
 
 def size_directory(current_dir) -> int:
-    '''recursively sets size of all directories''''
+    '''recursively sets size of all directories'''
 
     size = 0
     for content in current_dir.contents:
