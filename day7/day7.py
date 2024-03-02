@@ -1,18 +1,13 @@
 class File:
-    def __init__(self, name, size=0):
+    def __init__(self, name, size=-1):
         self.name = name
         self.size = size 
 
-
-    def __str__(self):
-        return f"file: '{self.name}', {self.size}"
-    
 
 class Dir(File):
     def __init__(self, name):
         super().__init__(name)
         self.contents = set()
-        self.size = -1 
 
 
     def add_file(self, file: File):
@@ -24,12 +19,9 @@ class Dir(File):
         file.parent = self
 
 
-    def __str__(self):
-        contents_str = '{' + '\n'.join([str(content) for content in self.contents]) + '}'   
-        return f'{self.name} {self.size} (dir) \n{contents_str}' 
-
-
 def size_directory(current_dir) -> int:
+    '''recursively sets size of all directories''''
+
     size = 0
     for content in current_dir.contents:
         if type(content) == Dir and content.size == -1:
@@ -41,8 +33,10 @@ def size_directory(current_dir) -> int:
     return size
             
 
-def parse_input() -> Dir:
-    file = open("input.txt")
+def parse_input(file_name) -> Dir:
+    '''returns the top node of a tree structure representing file system given an input file'''
+
+    file = open(file_name)
     lines = [line.strip() for line in file.readlines()]
     file.close()
 
@@ -51,10 +45,10 @@ def parse_input() -> Dir:
     
     for line in lines:
         if line[:4] == '$ cd':
-            if line[5:] == '..' and current_dir.name != '/':
+            dir_name = line[5:]
+            if dir_name == '..' and current_dir.name != '/':
                 current_dir = current_dir.parent
             else:
-                dir_name = line[5:]
                 for file in current_dir.contents:
                     if file.name == dir_name and type(file) == Dir:
                         current_dir = file
@@ -75,7 +69,8 @@ def parse_input() -> Dir:
     return root
 
 
-def all_dirs(current_dir):
+def all_dirs(current_dir) -> [Dir]:
+    '''returns a flat list of all directories in file system, these are found recursively'''
     dirs = [current_dir]
     for content in current_dir.contents:
         if type(content) == Dir:
@@ -86,11 +81,10 @@ def all_dirs(current_dir):
     
 
 #########################################
-#----------------------------------------
+#-Start of program-----------------------
 #########################################
 
-root = parse_input()
-
+root = parse_input("input.txt")
 
 def part1():
     dirs = all_dirs(root)
