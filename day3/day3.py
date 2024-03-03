@@ -3,7 +3,7 @@ lines = input.readlines()
 input.close()
 
 
-def getPriority(c):
+def get_priority(c):
     if c.islower():
         return ord(c) - ord('a') + 1
     else:
@@ -15,11 +15,11 @@ def part1():
     for line in lines:
         halfway = int(len(line) / 2)
         fst_half = line[:halfway]
-        snd_half = line[halfway:-1] #excluding newline
+        snd_half = line[halfway:-1]  # excluding newline
 
         for c in fst_half:
             if c in snd_half:
-                sum += getPriority(c)
+                sum += get_priority(c)
                 break
 
     return sum
@@ -27,21 +27,21 @@ def part1():
 
 def part2():
     sum = 0
-    
+
     group_index = 0
     while group_index < len(lines):
         fst = lines[group_index]
         snd = lines[group_index + 1]
         trd = lines[group_index + 2]
-        
+
         matches = []
         for c in fst:
-            if c in snd: 
+            if c in snd:
                 matches.append(c)
 
         for c in matches:
             if c in trd:
-                sum += getPriority(c)
+                sum += get_priority(c)
                 break
 
         group_index += 3
@@ -51,9 +51,3 @@ def part2():
 
 print(part1())
 print(part2())
-
-
-
-
-
-

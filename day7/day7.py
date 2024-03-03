@@ -1,14 +1,13 @@
 class File:
     def __init__(self, name, size=-1):
         self.name = name
-        self.size = size 
+        self.size = size
 
 
 class Dir(File):
     def __init__(self, name):
         super().__init__(name)
         self.contents = set()
-
 
     def add_file(self, file: File):
         for content in self.contents:
@@ -20,7 +19,7 @@ class Dir(File):
 
 
 def size_directory(current_dir) -> int:
-    '''recursively sets size of all directories'''
+    """recursively sets size of all directories"""
 
     size = 0
     for content in current_dir.contents:
@@ -31,10 +30,10 @@ def size_directory(current_dir) -> int:
 
     current_dir.size = size
     return size
-            
+
 
 def parse_input(file_name) -> Dir:
-    '''returns the top node of a tree structure representing file system given an input file'''
+    """returns the top node of a tree structure representing file system given an input file"""
 
     file = open(file_name)
     lines = [line.strip() for line in file.readlines()]
@@ -42,7 +41,7 @@ def parse_input(file_name) -> Dir:
 
     root = Dir('/')
     current_dir = root
-    
+
     for line in lines:
         if line[:4] == '$ cd':
             dir_name = line[5:]
@@ -58,7 +57,7 @@ def parse_input(file_name) -> Dir:
         elif line[:3] == 'dir':
             current_dir.add_file(Dir(line[4:]))
         else:
-            splitted = line.split(' ') 
+            splitted = line.split(' ')
             size = int(splitted[0])
             name = splitted[1]
             current_dir.add_file(File(name, size=size))
@@ -70,21 +69,21 @@ def parse_input(file_name) -> Dir:
 
 
 def all_dirs(current_dir) -> [Dir]:
-    '''returns a flat list of all directories in file system, these are found recursively'''
+    """returns a flat list of all directories in file system, these are found recursively"""
     dirs = [current_dir]
     for content in current_dir.contents:
         if type(content) == Dir:
             dirs += all_dirs(content)
 
-    return dirs 
-    
-    
+    return dirs
+
 
 #########################################
-#-Start of program-----------------------
+# -Start of program-----------------------
 #########################################
 
 root = parse_input("input.txt")
+
 
 def part1():
     dirs = all_dirs(root)
@@ -98,7 +97,7 @@ def part2():
 
     for dir in dirs:
         size = dir.size
-        if size >= space_to_free and size < min:
+        if space_to_free <= size < min:
             min = size
 
     return min

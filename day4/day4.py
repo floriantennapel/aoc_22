@@ -5,7 +5,7 @@ file.close()
 
 def parse_range(range_str):
     splitted = range_str.split('-')
-    return (int(splitted[0]), int(splitted[1]))
+    return int(splitted[0]), int(splitted[1])
 
 
 pairs = []
@@ -20,7 +20,7 @@ def one_fully_contains_other(pair):
     hi1 = pair[0][1]
     hi2 = pair[1][1]
 
-    return (lo1 <= lo2 and hi1 >= hi2) or (lo2 <= lo1 and hi2 >= hi1) 
+    return (lo1 <= lo2 and hi1 >= hi2) or (lo2 <= lo1 and hi2 >= hi1)
 
 
 def has_overlap(pair):
@@ -30,7 +30,7 @@ def has_overlap(pair):
     hi2 = pair[1][1]
 
     return hi1 >= lo2 and hi2 >= lo1
-    
+
 
 def part1():
     return len([p for p in pairs if one_fully_contains_other(p)])

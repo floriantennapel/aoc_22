@@ -8,9 +8,9 @@ def n_unique(n):
     buffer = list(signal[:n])
 
     for c in signal[n:]:
-        if (len(set(buffer)) == len(buffer)):
+        if len(set(buffer)) == len(buffer):
             return count
-        
+
         buffer.pop(0)
         buffer.append(c)
         count += 1
@@ -22,8 +22,7 @@ def part1():
 
 def part2():
     return n_unique(14)
-    
+
 
 print(part1())
 print(part2())
-

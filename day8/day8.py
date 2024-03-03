@@ -13,7 +13,7 @@ def scan_line(row, col, d_row, d_col):
     count_visible = 0
     highest = -1
 
-    while row >= 0 and col >= 0 and row < len(grid) and col < len(grid[0]):
+    while 0 <= row < len(grid) and 0 <= col < len(grid[0]):
         tree = grid[row][col]
 
         if tree.height > highest:
@@ -34,7 +34,7 @@ def view_distance(row, col, d_row, d_col):
 
     row += d_row
     col += d_col
-    while row >= 0 and col >= 0 and row < len(grid) and col < len(grid[0]):
+    while 0 <= row < len(grid) and 0 <= col < len(grid[0]):
         next_height = grid[row][col].height
         count += 1
 
@@ -66,17 +66,17 @@ def part1():
 
 def part2():
     hi_score = -1
-    
+
     for i in range(len(grid)):
         for j in range(len(grid[0])):
-            up    = view_distance(i, j, -1,  0)
-            down  = view_distance(i, j,  1,  0)
-            left  = view_distance(i, j,  0, -1)
-            right = view_distance(i, j,  0,  1)
+            up = view_distance(i, j, -1, 0)
+            down = view_distance(i, j, 1, 0)
+            left = view_distance(i, j, 0, -1)
+            right = view_distance(i, j, 0, 1)
 
             score = up * down * left * right
             hi_score = max(score, hi_score)
-    
+
     return hi_score
 
 

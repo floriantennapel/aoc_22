@@ -9,9 +9,9 @@ def parse_crates():
 
     for line in reversed(file.readlines()):
         for i in range(no_stacks):
-            index = 1 + i*4
+            index = 1 + i * 4
             crate = line[index]
-            if (crate != ' '):
+            if crate != ' ':
                 stacks[i].append(crate)
 
     file.close()
@@ -38,10 +38,10 @@ def part1():
 
     for move in moves:
         from_index = move[1][0] - 1
-        to_index = move[1][1] - 1 
+        to_index = move[1][1] - 1
 
         for i in range(move[0]):
-            if (len(stacks[from_index]) == 0):
+            if len(stacks[from_index]) == 0:
                 break
 
             stacks[to_index].append(stacks[from_index].pop())
@@ -54,7 +54,7 @@ def part2():
 
     for move in moves:
         from_index = move[1][0] - 1
-        to_index = move[1][1] - 1 
+        to_index = move[1][1] - 1
 
         no_crates = move[0]
 
@@ -67,7 +67,3 @@ def part2():
 parse_moves()
 print(part1())
 print(part2())
-
-
-
-
