@@ -4,7 +4,7 @@ class Tree:
         self.visible = False
 
 
-file = open('input.txt')
+file = open("input.txt")
 grid = [[Tree(int(c)) for c in line.strip()] for line in file.readlines()]
 file.close()
 
