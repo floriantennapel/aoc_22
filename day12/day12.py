@@ -31,9 +31,7 @@ def valid_step(from_node, to_node, part1):
 
     # moving backwards in part2
     if not part1:
-        temp = from_height
-        from_height = to_height
-        to_height = temp
+        from_height, to_height = to_height, from_height
 
     if not isinstance(from_height, int):  # start
         return to_height <= 1
