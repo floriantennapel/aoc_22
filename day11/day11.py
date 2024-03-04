@@ -1,17 +1,9 @@
-# I did need some help to find out what to do in part 2
-# this is the product of all divisors used in monkey tests
-lcm = 17 * 3 * 5 * 7 * 11 * 19 * 2 * 13
-
-
 class Monkey:
-    def __init__(self, items, operation, test, part1):
+    def __init__(self, items, operation, test):
         self.items = items
         self.operation = operation
         self.test = test
         self.inspections = 0
-
-        # are we solving part 1 or 2?
-        self.part1 = part1
 
     def get_item(self, item):
         self.items.append(item)
@@ -19,14 +11,24 @@ class Monkey:
     def inspect_item(self):
         self.inspections += 1
         item = self.items.pop(0)
-
-        if self.part1:
-            item = self.operation(item) // 3
-        else:
-            item = self.operation(item) % lcm
+        item = self.operation(item) // 3
 
         next_monkey = self.test(item)
         return (item, next_monkey)
+
+
+class MonkeyPart2(Monkey):
+    def inspect_item(self):
+        # I did need some help to find out what to do in part 2
+        # this is the product of all divisors used in monkey tests
+        lcm = 17 * 3 * 5 * 7 * 11 * 19 * 2 * 13
+
+        self.inspections += 1
+        item = self.items.pop(0)
+        item = self.operation(item) % lcm
+
+        next_monkey = self.test(item)
+        return item, next_monkey
 
 
 def parse_test(lines):
@@ -72,7 +74,12 @@ def parse_input(file_name, part1=True):
             case "Test:":
                 test = parse_test([lines[j] for j in range(i, i + 3)])
                 i += 3
-                monkeys.append(Monkey(items, operation, test, part1))
+                monkey = (
+                    Monkey(items, operation, test)
+                    if part1
+                    else MonkeyPart2(items, operation, test)
+                )
+                monkeys.append(monkey)
 
         i += 1
 
