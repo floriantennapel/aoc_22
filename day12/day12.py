@@ -1,102 +1,73 @@
-file = open("input.txt")
-map = [
-    [ord(c) - ord("a") if c not in "SE" else c for c in line.strip()]
-    for line in file.readlines()
-]
+from queue import Queue
+
+file = open('input.txt')
+hills = [line.strip() for line in file.readlines()]
 file.close()
 
-
-class Node:
+class HillClimb:
     def __init__(self, pos, prev):
         self.pos = pos
-        self.prev = prev
-        self.height = map[pos[0]][pos[1]]
-        self.dist = 0 if prev is None else prev.dist + 1
+        self.steps = prev.steps + 1 if prev is not None else 0
+        self.height = hills[pos[0]][pos[1]]
 
-    def __eq__(self, other):
-        if other is self:
-            return True
-        elif isinstance(other, Node):
-            return self.pos == other.pos
+def valid_step(prev_height, new_height):
+    if new_height == 'E':
+        return prev_height in 'zy'
+    if prev_height == 'S':
+        return new_height in 'ab'
+    
+    return ord(new_height) - ord(prev_height) <= 1
 
-        return False
+def valid_pos(pos):
+    r = pos[0]
+    c = pos[1]
+    return r >= 0 and r < len(hills) and c >= 0 and c < len(hills[0])
 
-    def __hash__(self):
-        return hash(self.pos)
+def get_next(prev, visited, part1):
+    next = set()
+    
+    for d_r, d_c in [(1,0), (-1,0), (0,1), (0,-1)]:
+        p = prev.pos
+        new_pos = (p[0] + d_r, p[1] + d_c)
+        if not valid_pos(new_pos):
+            continue
 
+        new_height = hills[new_pos[0]][new_pos[1]]
+        from_height = prev.height if part1 else new_height
+        to_height = new_height if part1 else prev.height
+        
+        if new_pos not in visited and valid_step(from_height, to_height):
+            next_hill = HillClimb(new_pos, prev)
+            next.add(next_hill)
+            visited.add(new_pos)
 
-def valid_step(from_node, to_node, part1):
-    from_height = from_node.height
-    to_height = to_node.height
+    return next
 
-    # moving backwards in part2
-    if not part1:
-        from_height, to_height = to_height, from_height
+def find_char(c):
+    for i, row in enumerate(hills):
+        for j, col in enumerate(row):
+            if c == col:
+                return (i, j)
 
-    if not isinstance(from_height, int):  # start
-        return to_height <= 1
-    elif not isinstance(to_height, int):
-        return from_height >= 24
-    else:
-        return to_height <= from_height + 1
-
-
-def valid_moves(node, visited, part1):
-    row = node.pos[0]
-    col = node.pos[1]
-
-    next = []
-
-    if row > 0:
-        next.append(Node((row - 1, col), node))
-    if row < len(map) - 1:
-        next.append(Node((row + 1, col), node))
-    if col > 0:
-        next.append(Node((row, col - 1), node))
-    if col < len(map[0]) - 1:
-        next.append(Node((row, col + 1), node))
-
-    return [n for n in next if (n not in visited) and valid_step(node, n, part1)]
-
-
-def dijkstra(part1=True):
-    start_point = "S" if part1 else "E"
-    end_point = "E" if part1 else 0
-
-    # find starting point
-    start: Node = None
-    for i in range(len(map)):
-        for j in range(len(map[0])):
-            if map[i][j] == start_point:
-                start = Node((i, j), None)
-
-    queue = [start]
+def bfs(part1):
     visited = set()
+    queue = Queue()
+
+    start = find_char('S') if part1 else find_char('E')
+    queue.put(HillClimb(start, None))
+
+    goal = 'E' if part1 else 'a'
     while True:
-        current = queue.pop(0)
-        visited.add(current)
-        queue = [n for n in queue if n not in visited]
+        current = queue.get()
 
-        if current.height == end_point:
-            return current
+        if current.height == goal:
+            print(current.steps)
+            return
 
-        queue += valid_moves(current, visited, part1)
-        queue.sort(key=(lambda n: n.dist))
+        for hill_climb in get_next(current, visited, part1):
+            queue.put(hill_climb)
 
-
-def print_path(end_point):
-    """simple visualization of path taken"""
-    pretty = [["." for _ in range(len(map[0]))] for _ in range(len(map))]
-
-    current = end_point
-    while current is not None:
-        pretty[current.pos[0]][current.pos[1]] = "#"
-        current = current.prev
-
-    for line in pretty:
-        print("".join(line))
+bfs(True)
+bfs(False)
 
 
-print(dijkstra().dist)
-print(dijkstra(part1=False).dist)
-# print_path(dijkstra())
